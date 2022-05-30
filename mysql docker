@@ -1,0 +1,1 @@
+docker run --name "mysql" -d -p 3306:3306 -v "D:\DATA_MYSQL_DOCKER\DEV:/var/lib/mysql" -e MYSQL_ROOT_PASSWORD=root123 -e MYSQL_DATABASE=algafood -e MYSQL_USER=app -e MYSQL_PASSWORD=app313 mysql/mysql-server:latest
