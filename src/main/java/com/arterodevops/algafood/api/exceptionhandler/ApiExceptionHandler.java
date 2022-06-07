@@ -20,65 +20,110 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<?> negocioExceptionHandler(NegocioException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(getAlgafoodException(e));
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ERRO_NEGOCIO;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
 
     }
 
     @ExceptionHandler(RestauranteNotFoundException.class)
     public ResponseEntity<?> restauranteNotFoundExceptionHandler(RestauranteNotFoundException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_NAO_ENCONTRADA;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
 
     }
 
     @ExceptionHandler(CozinhaNotFoundException.class)
     public ResponseEntity<?> cozinhaNotFoundExceptionHandler(CozinhaNotFoundException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_NAO_ENCONTRADA;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
 
     }
 
     @ExceptionHandler(CidadeNotFoundException.class)
     public ResponseEntity<?> cidadeNotFoundExceptionHandler(CidadeNotFoundException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_NAO_ENCONTRADA;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EntityAlgafoodNotFoundException.class)
     public ResponseEntity<?> entityAlgafoodNotFoundExceptionHandler(EntityAlgafoodNotFoundException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_NAO_ENCONTRADA;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EntityInUseException.class)
     public ResponseEntity<?> entityInUseExceptionHandler(EntityInUseException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+        HttpStatus status = HttpStatus.CONFLICT;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_EM_USO;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(EstadoNotFoundException.class)
     public ResponseEntity<?> EstadoNotFoundExceptionHandler(EstadoNotFoundException e) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        AlgafoodExceptionType algafoodExceptionType = AlgafoodExceptionType.ENTIDADE_NAO_ENCONTRADA;
+        String detail = e.getMessage();
+
+        AlgafoodException algafoodException = createProblemBuilder(status, algafoodExceptionType, detail).build();
+
+        return handleExceptionInternal(e, algafoodException, new HttpHeaders(), status, request);
     }
 
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         if (body == null) {
-            body = getAlgafoodException(status.getReasonPhrase());
+            body = AlgafoodException.builder()
+                    .title(status.getReasonPhrase())
+                    .status(status.value())
+                    .build();
         } else if (body instanceof String) {
-            body = getAlgafoodException((String) body);
+            body = AlgafoodException.builder()
+                    .title((String) body)
+                    .status(status.value())
+                    .build();
         }
 
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
-    private AlgafoodException getAlgafoodException(Exception e) {
-        return getAlgafoodException(e.getMessage());
-    }
+    private AlgafoodException.AlgafoodExceptionBuilder createProblemBuilder(HttpStatus status, AlgafoodExceptionType problemType, String detail) {
 
-    private AlgafoodException getAlgafoodException(String message) {
-        AlgafoodException exception = AlgafoodException.builder()
-                .dataHora(LocalDateTime.now())
-                .mensagem(message)
-                .build();
-        return exception;
+        return AlgafoodException.builder()
+                .status(status.value())
+                .type(problemType.getUri())
+                .title(problemType.getTitle())
+                .detail(detail);
     }
 
 
