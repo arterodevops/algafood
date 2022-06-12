@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController()
@@ -18,7 +19,7 @@ public class CozinhaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cozinha add(@RequestBody Cozinha cozinha) {
+    public Cozinha add(@RequestBody @Valid Cozinha cozinha) {
         return cozinhaService.add(cozinha);
     }
 
@@ -33,7 +34,7 @@ public class CozinhaController {
     }
 
     @PutMapping("/{cozinhaId}")
-    public Cozinha update(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha) {
+    public Cozinha update(@PathVariable Long cozinhaId, @RequestBody @Valid Cozinha cozinha) {
         Cozinha cozinhaAtual = cozinhaService.findOrElse(cozinhaId);
 
         BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");

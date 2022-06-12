@@ -45,7 +45,7 @@ public class RestauranteController {
     }
 
     @PutMapping("/{restauranteId}")
-    public Restaurante update(@PathVariable Long restauranteId, @RequestBody Restaurante restaurante) {
+    public Restaurante update(@PathVariable Long restauranteId, @RequestBody @Valid Restaurante restaurante) {
 
         try {
             Restaurante restauranteAtual = restauranteService.findOrElse(restauranteId);
